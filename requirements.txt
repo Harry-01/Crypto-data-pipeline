@@ -1,0 +1,12 @@
+# These libraries are used ONLY for the Streamlit app.
+# This is to make the Docker image as small as possible and reduce security issues.
+
+# Streamlit
+pandas==2.1.4
+plotly==5.18.0
+streamlit==1.33.0
+
+# Google Cloud
+google-cloud-core==2.4.0
+google-cloud-bigquery==3.14.1
+google-cloud-secret-manager==2.17.0

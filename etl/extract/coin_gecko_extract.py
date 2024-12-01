@@ -31,6 +31,27 @@ def get_coin_list() -> Optional[pd.DataFrame]:
         return df
     return None
 
+def get_coin_kw_lists() -> list[list[str]]:
+    """Get list of cryptocurrency keywords."""
+    coin_list = get_coin_list()
+    all_keywords = []
+    for _, row in coin_list.iterrows():
+        # Create a list of keywords for each coin
+        coin_kw = [row["id"], row["name"].lower(), row["symbol"].lower()]
+        all_keywords.append(coin_kw)
+    return all_keywords
+
+def get_coin_code():
+    """Get list of cryptocurrency codes."""
+    coin_list = get_coin_list()
+    all_keywords = []
+    for _, row in coin_list.iterrows():
+        # Create a list of keywords for each coin
+        coin_kw = [row["symbol"].upper()]
+        all_keywords.append(coin_kw)
+    return all_keywords
+
+
 def get_coins_markets(ids) -> Optional[pd.DataFrame]:
     """Fetch market data for the top N coins by market cap."""
     endpoint = "/coins/markets"
@@ -47,24 +68,12 @@ def get_coins_markets(ids) -> Optional[pd.DataFrame]:
     return None
 
 
-def get_historical_data(coin_id: str, days: int =30, vs_currency: str ="usd") -> Optional[pd.DataFrame]:
-    endpoint = f"/coins/{coin_id}/history"
-    params = {"vs_currency": vs_currency, "days": days}
-    data = fetch_data(endpoint, params)
-    if data:
-        prices = data.get("prices", [])
-        df = pd.DataFrame(prices, columns=["timestamp", "price", ])
-        df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
-        return df
-    return None
-
-
-
 if __name__ == "__main__":
     # 1. Get list of coins
+    pd.set_option('display.max_columns', None)
     coin_list_df = get_coin_list()
     print("Coin List:")
-    print(coin_list_df.shape)
+    print(coin_list_df.head(20))
 
     # # 4. Get market data for top 10 coins by market cap
     market_df = get_coins_markets(coin_list_df['id'].tolist())

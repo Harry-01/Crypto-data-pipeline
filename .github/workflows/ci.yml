@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Unit tests
+        run: pytest -q
+      - name: dbt parse (validates models, macros and tests without a warehouse)
+        working-directory: dbt
+        env:
+          DATABRICKS_HOST: ci.cloud.databricks.com
+          DATABRICKS_HTTP_PATH: /sql/1.0/warehouses/ci
+          DATABRICKS_TOKEN: ci
+        run: dbt parse --profiles-dir .

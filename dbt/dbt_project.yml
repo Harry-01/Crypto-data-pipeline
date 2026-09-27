@@ -1,0 +1,30 @@
+name: crypto_pipeline
+version: "1.0.0"
+config-version: 2
+profile: crypto_pipeline
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # Root of the Unity Catalog volume the extractor lands raw NDJSON files into.
+  landing_path: "/Volumes/{{ env_var('DATABRICKS_CATALOG', 'workspace') }}/{{ env_var('RAW_SCHEMA', 'crypto_raw') }}/{{ env_var('LANDING_VOLUME', 'landing') }}"
+
+models:
+  crypto_pipeline:
+    +file_format: delta
+    bronze:
+      +schema: bronze
+      +materialized: incremental
+      +incremental_strategy: append
+      +tags: ["bronze"]
+    silver:
+      +schema: silver
+      +materialized: table
+      +tags: ["silver"]
+    gold:
+      +schema: gold
+      +materialized: table
+      +tags: ["gold"]

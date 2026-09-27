@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: bronze_coin_markets
+    description: Append-only raw CoinGecko market snapshots with file lineage columns.
+    columns:
+      - name: _source_file
+        description: Landing-zone file the row was read from (used for incremental loading).
+        data_tests: [not_null]
+
+  - name: bronze_news_articles
+    description: Append-only raw RSS news rows (article x matched coin) with sentiment scored at ingestion.
+    columns:
+      - name: _source_file
+        data_tests: [not_null]
+
+  - name: bronze_reddit_posts
+    description: Append-only raw Reddit posts (post x coin). Disabled when ENABLE_REDDIT=false.
+    columns:
+      - name: _source_file
+        data_tests: [not_null]

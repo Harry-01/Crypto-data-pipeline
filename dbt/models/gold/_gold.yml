@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: dim_coins
+    description: One row per tracked coin with its latest attributes.
+    columns:
+      - name: coin_id
+        description: CoinGecko coin identifier.
+        data_tests: [unique, not_null]
+
+  - name: fct_coin_daily
+    description: >
+      Daily coin-level fact table joining closing price and market data with
+      news volume/sentiment and Reddit activity/sentiment.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [coin_id, market_date]
+    columns:
+      - name: coin_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_coins')
+                field: coin_id
+      - name: market_date
+        data_tests: [not_null]
+      - name: news_sentiment_avg
+        data_tests:
+          - value_between:
+              arguments:
+                min_value: -1
+                max_value: 1
+
+  - name: fct_market_sentiment_daily
+    description: Market-wide news sentiment per feed per day.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [news_date, feed]

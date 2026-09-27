@@ -1,0 +1,17 @@
+# Local Airflow (standalone mode) for scheduling the pipeline.
+#   docker compose up --build   ->  http://localhost:8080
+services:
+  airflow:
+    build: .
+    command: standalone
+    env_file: .env
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      # local demo only: skip the login screen
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/opt/airflow/project

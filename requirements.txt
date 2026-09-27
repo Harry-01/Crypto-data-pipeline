@@ -1,12 +1,9 @@
-# These libraries are used ONLY for the Streamlit app.
-# This is to make the Docker image as small as possible and reduce security issues.
+# Pipeline runtime (extraction + landing)
+requests>=2.32,<3
+python-dotenv>=1.0,<2
+feedparser>=6.0,<7
+vaderSentiment>=3.3,<4
+databricks-sdk>=0.100,<1
 
-# Streamlit
-pandas==2.1.4
-plotly==5.18.0
-streamlit==1.33.0
-
-# Google Cloud
-google-cloud-core==2.4.0
-google-cloud-bigquery==3.14.1
-google-cloud-secret-manager==2.17.0
+# Transformation
+dbt-databricks>=1.10,<2

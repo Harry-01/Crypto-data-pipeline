@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: silver_coin_market_snapshots
+    description: Typed, de-duplicated CoinGecko snapshots - one row per coin per CoinGecko update.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [coin_id, last_updated_at]
+    columns:
+      - name: coin_id
+        data_tests: [not_null]
+      - name: last_updated_at
+        data_tests: [not_null]
+      - name: price_usd
+        data_tests:
+          - not_null
+          - value_between:
+              arguments:
+                min_value: 0
+                max_value: 10000000
+
+  - name: silver_news_articles
+    description: De-duplicated news articles, one row per article x coin (coin_id null = no tracked coin mentioned).
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [article_id, coin_id]
+    columns:
+      - name: article_id
+        data_tests: [not_null]
+      - name: event_at
+        data_tests: [not_null]
+      - name: sentiment_compound
+        data_tests:
+          - value_between:
+              arguments:
+                min_value: -1
+                max_value: 1
+      - name: sentiment_label
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [positive, neutral, negative]
+
+  - name: silver_reddit_posts
+    description: De-duplicated Reddit posts, latest observed score and comments per post x coin.
+    data_tests:
+      - unique_combination:
+          arguments:
+            columns: [post_id, coin_id]
+    columns:
+      - name: post_id
+        data_tests: [not_null]
+      - name: coin_id
+        data_tests: [not_null]
+      - name: sentiment_compound
+        data_tests:
+          - value_between:
+              arguments:
+                min_value: -1
+                max_value: 1
